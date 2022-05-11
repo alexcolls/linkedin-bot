@@ -8,10 +8,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from getpass import getpass
 from time import sleep
 import random
+import credentials
 
-# default linkedin login
-linkedin_email = 'alexcollsoutumuro@gmail.com'
-linkedin_pass  = '1291MAXaco313'
 
 # open chrome driver
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
@@ -25,7 +23,7 @@ def Login():
     # email input
     email = input('Introduce a Linkedin email or press enter for default: ')
     if len(email) < 4:
-        email = linkedin_email
+        email = credentials.linkedin_email
     # write username input
     username.send_keys(email)
     # select password input
@@ -33,7 +31,7 @@ def Login():
     # password input
     getpassword = getpass('Introduce password: ')
     if len(getpassword) < 4:
-        getpassword = linkedin_pass
+        getpassword = credentials.linkedin_pass
     # write password input
     password.send_keys(getpassword)
     # log in
