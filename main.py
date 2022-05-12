@@ -1,5 +1,5 @@
 # import libraries
-import sys
+import subprocess
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -11,8 +11,12 @@ import random
 import credentials
 
 
+
 # open chrome driver
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+def Driver():
+    return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+
+driver = Driver()
 
 # login to a Linkedin account
 def Login():
@@ -39,6 +43,17 @@ def Login():
     log_in_button.click()
 
 Login()
+
+def Switch_IP():
+    command = "protonvpn-cli c -r"
+    subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+def Restart():
+    driver.close()
+    Switch_IP()
+    Driver()
+    Login()
+
 
 def Keywords():
     keys = []
@@ -85,17 +100,22 @@ def GetLinks( pages ):
         try:
             next_button = driver.find_element(By.ID, 'pnnext') 
             next_button.click()
-        except: break
+        except: 
+            Restart()
+            break176960
         'sleep(random.randint(1,10))'
     return urls
 
 def GetDB():
     db = []
     while True:
-        GoogleSearch(Keywords())
-        urls = GetLinks(1000)
-        db = db + urls
-        ans = input('You found '+str(len(db))+' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
+        try:
+            GoogleSearch(Keywords())
+            urls = GetLinks(1000)
+            db = db + urls
+            ans = input('You found '+str(len(db))+' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
+        except:
+            Restart()
         if len(ans) < 1 or ans == 'y' or ans == 'Y' or ans == 'yes' or ans == 'YES':
             continue
         else: break
@@ -104,9 +124,9 @@ def GetDB():
 
 db = GetDB()
 
+driver.close()
+
 driver.get(db[100])
 driver.page_source
 sleep(1)
-
-
 
