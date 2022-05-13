@@ -1,5 +1,5 @@
 # import libraries
-import subprocess
+import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -9,7 +9,6 @@ from getpass import getpass
 from time import sleep
 import random
 import credentials
-
 
 
 # open chrome driver
@@ -25,7 +24,7 @@ def Login():
     # select username input
     username = driver.find_element(by=By.CLASS_NAME, value='input__input')
     # email input
-    email = input('Introduce a Linkedin email or press enter for default: ')
+    email = input('\nIntroduce a Linkedin email or press enter for default: ')
     if len(email) < 4:
         email = credentials.linkedin_email
     # write username input
@@ -44,14 +43,15 @@ def Login():
 
 Login()
 
-def Switch_IP():
-    command = "protonvpn-cli c -r"
-    subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def SwitchIP():
+    os.system("protonvpn-cli status")
+    os.system("protonvpn-cli c --tor")
+    os.system("protonvpn-cli status")
 
 def Restart():
     driver.close()
-    Switch_IP()
-    Driver()
+    SwitchIP()
+    driver = Driver()
     Login()
 
 
@@ -87,35 +87,34 @@ def GoogleSearch( keywords ):
     search_query.send_keys(search)
     search_query.send_keys(Keys.RETURN)
 
+
+db = []
 def GetLinks( pages ):
     urls = []
     while pages > 1:
         linkedins = driver.find_elements(By.CLASS_NAME, 'yuRUbf')
         for i in range(len(linkedins)):
+            sleep(random.randint(1,3))
             url = linkedins[i].find_element(by=By.CSS_SELECTOR, value='a').get_attribute('href')
             if 'linkedin' in url:
                 urls.append(url)
-        print(len(urls))
+        print(len(db)+len(urls))
         pages -= 1
         try:
             next_button = driver.find_element(By.ID, 'pnnext') 
             next_button.click()
-        except: 
-            Restart()
-            break176960
-        'sleep(random.randint(1,10))'
+        except: break
     return urls
 
 def GetDB():
-    db = []
     while True:
         try:
             GoogleSearch(Keywords())
-            urls = GetLinks(1000)
+            urls = GetLinks(100)
             db = db + urls
             ans = input('You found '+str(len(db))+' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
         except:
-            Restart()
+            input('To continue press enter... ')
         if len(ans) < 1 or ans == 'y' or ans == 'Y' or ans == 'yes' or ans == 'YES':
             continue
         else: break
@@ -123,8 +122,6 @@ def GetDB():
     return db
 
 db = GetDB()
-
-driver.close()
 
 driver.get(db[100])
 driver.page_source
