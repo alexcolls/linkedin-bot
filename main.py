@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from getpass import getpass
 from time import sleep
-import random
 import credentials
 import numpy as np
 
@@ -41,8 +40,6 @@ def Login():
     # log in
     log_in_button = driver.find_element(by=By.CLASS_NAME, value='sign-in-form__submit-button') 
     log_in_button.click()
-
-Login()
 
 def SwitchIP():
     os.system("protonvpn-cli status")
@@ -90,9 +87,12 @@ def GoogleSearch( keywords ):
 
 
 def GetLinks( db, pages ):
-    urls = []
+    urls = []; linkedins = []
     while pages > 1:
-        linkedins = driver.find_elements(By.CLASS_NAME, 'yuRUbf')
+        try:
+            linkedins = driver.find_elements(By.CLASS_NAME, 'yuRUbf')
+        except:
+            input('To continue press enter... ')
         for i in range(len(linkedins)):
             #sleep(random.randint(1,3))
             url = linkedins[i].find_element(by=By.CSS_SELECTOR, value='a').get_attribute('href')
@@ -103,10 +103,13 @@ def GetLinks( db, pages ):
         try:
             next_button = driver.find_element(By.ID, 'pnnext') 
             next_button.click()
-        except: break
+        except: 
+            cont = input('Press enter to continue scrapping... ')
+            if len(cont) < 1: continue 
+            else: break
     return urls
 
-def GetDB():
+def GetData():
     db = []
     while True:
         try:
@@ -122,11 +125,14 @@ def GetDB():
     db = list(set(db))
     return db
 
-Data = GetDB()
+Login()
 
-np.savetxt("Data.csv", Data, delimiter =", ", fmt ='% s')
+Data = GetData()
 
-driver.get(Data[100])
-driver.page_source
-sleep(1)
+name = input('Insert name of the database?')
+input('Press enter to confirm... ')
+np.savetxt(name+'.csv', Data, delimiter =", ", fmt ='% s')
+
+driver.close()
+
 
