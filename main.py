@@ -9,6 +9,7 @@ from getpass import getpass
 from time import sleep
 import random
 import credentials
+import numpy as np
 
 
 # open chrome driver
@@ -88,13 +89,12 @@ def GoogleSearch( keywords ):
     search_query.send_keys(Keys.RETURN)
 
 
-db = []
-def GetLinks( pages ):
+def GetLinks( db, pages ):
     urls = []
     while pages > 1:
         linkedins = driver.find_elements(By.CLASS_NAME, 'yuRUbf')
         for i in range(len(linkedins)):
-            sleep(random.randint(1,3))
+            #sleep(random.randint(1,3))
             url = linkedins[i].find_element(by=By.CSS_SELECTOR, value='a').get_attribute('href')
             if 'linkedin' in url:
                 urls.append(url)
@@ -107,23 +107,26 @@ def GetLinks( pages ):
     return urls
 
 def GetDB():
+    db = []
     while True:
         try:
             GoogleSearch(Keywords())
-            urls = GetLinks(100)
+            urls = GetLinks(db, 100)
             db = db + urls
-            ans = input('You found '+str(len(db))+' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
         except:
             input('To continue press enter... ')
+        ans = input('You found '+str(len(db))+' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
         if len(ans) < 1 or ans == 'y' or ans == 'Y' or ans == 'yes' or ans == 'YES':
             continue
         else: break
     db = list(set(db))
     return db
 
-db = GetDB()
+Data = GetDB()
 
-driver.get(db[100])
+np.savetxt("Data.csv", Data, delimiter =", ", fmt ='% s')
+
+driver.get(Data[100])
 driver.page_source
 sleep(1)
 
