@@ -2,7 +2,6 @@
 
 import os
 from csv import reader
-from getpass import getpass
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -51,3 +50,29 @@ for profile in data:
     sleep(ranint)
 
 
+driver.get(data[0][0])
+html = driver.page_source
+
+
+"""
+
+from bs4 import BeautifulSoup as bs
+
+soup = bs(html)                #make BeautifulSoup
+prettyHTML = soup.prettify()
+
+soup.findAll('div')
+
+name = soup.find('h1').get_text()
+
+description = soup.find('div', class_='text-body-medium break-words').get_text()
+description = description.replace('\n      ', '')
+description = description.replace('\n    ', '')
+
+location = soup.find('span', class_='text-body-small inline t-black--light break-words').get_text()
+location = location.replace('\n      ', '')
+location = location.replace('\n    ', '')
+
+soup.find('p', class_='pvs-header__title-container')
+
+"""

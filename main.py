@@ -129,7 +129,7 @@ Login()
 
 Data = GetData()
 
-name = input('Insert name of the database?')
+name = input('Insert name of the database? ')
 input('Press enter to confirm... ')
 np.savetxt(name+'.csv', Data, delimiter =", ", fmt ='% s')
 
