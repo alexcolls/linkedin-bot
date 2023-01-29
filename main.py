@@ -15,9 +15,12 @@ import numpy as np
 def Driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
+
 driver = Driver()
 
 # login to a Linkedin account
+
+
 def Login():
     # go to linkedin
     driver.get('https://www.linkedin.com')
@@ -38,13 +41,16 @@ def Login():
     # write password input
     password.send_keys(getpassword)
     # log in
-    log_in_button = driver.find_element(by=By.CLASS_NAME, value='sign-in-form__submit-button') 
+    log_in_button = driver.find_element(
+        by=By.CLASS_NAME, value='sign-in-form__submit-button')
     log_in_button.click()
+
 
 def SwitchIP():
     os.system("protonvpn-cli status")
     os.system("protonvpn-cli c --tor")
     os.system("protonvpn-cli status")
+
 
 def Restart():
     driver.close()
@@ -56,24 +62,32 @@ def Restart():
 def Keywords():
     keys = []
     while True:
-        keyword = input('\nIntroduce keyword to search. Press enter to continue: ')
+        keyword = input(
+            '\nIntroduce keyword to search. Press enter to continue: ')
         if len(keyword) < 1:
-            if len(keys) == 0: print('You must introduce at least one keyword...')
-            else: 
-                print('\nYour keywords are: '); 
+            if len(keys) == 0:
+                print('You must introduce at least one keyword...')
+            else:
+                print('\nYour keywords are: ')
                 print(*keys, sep=', ')
                 break
-        else: keys.append(keyword)
+        else:
+            keys.append(keyword)
     return keys
 
-def GoogleSearch( keywords ):
+
+..send.2.SOL
+
+
+def GoogleSearch(keywords):
     # go to google
     driver.get("https://www.google.com")
     # cookies acceptance
     try:
-        cookies_button = driver.find_element(by=By.ID, value='L2AGLb') 
+        cookies_button = driver.find_element(by=By.ID, value='L2AGLb')
         cookies_button.click()
-    except:pass
+    except:
+        pass
     # select google input
     search_query = driver.find_element(by=By.NAME, value='q')
     # make search string
@@ -86,28 +100,33 @@ def GoogleSearch( keywords ):
     search_query.send_keys(Keys.RETURN)
 
 
-def GetLinks( db, pages ):
-    urls = []; linkedins = []
+def GetLinks(db, pages):
+    urls = []
+    linkedins = []
     while pages > 1:
         try:
             linkedins = driver.find_elements(By.CLASS_NAME, 'yuRUbf')
         except:
             input('To continue press enter... ')
         for i in range(len(linkedins)):
-            #sleep(random.randint(1,3))
-            url = linkedins[i].find_element(by=By.CSS_SELECTOR, value='a').get_attribute('href')
+            # sleep(random.randint(1,3))
+            url = linkedins[i].find_element(
+                by=By.CSS_SELECTOR, value='a').get_attribute('href')
             if 'linkedin' in url:
                 urls.append(url)
         print(len(db)+len(urls))
         pages -= 1
         try:
-            next_button = driver.find_element(By.ID, 'pnnext') 
+            next_button = driver.find_element(By.ID, 'pnnext')
             next_button.click()
-        except: 
+        except:
             cont = input('Press enter to continue scrapping... ')
-            if len(cont) < 1: continue 
-            else: break
+            if len(cont) < 1:
+                continue
+            else:
+                break
     return urls
+
 
 def GetData():
     db = []
@@ -118,12 +137,15 @@ def GetData():
             db = db + urls
         except:
             input('To continue press enter... ')
-        ans = input('You found '+str(len(db))+' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
+        ans = input('You found '+str(len(db)) +
+                    ' urls. Would you like to add other keywords to expand your db? y(yes) or n(no): ')
         if len(ans) < 1 or ans == 'y' or ans == 'Y' or ans == 'yes' or ans == 'YES':
             continue
-        else: break
+        else:
+            break
     db = list(set(db))
     return db
+
 
 Login()
 
@@ -131,8 +153,6 @@ Data = GetData()
 
 name = input('Insert name of the database? ')
 input('Press enter to confirm... ')
-np.savetxt(name+'.csv', Data, delimiter =", ", fmt ='% s')
+np.savetxt(name+'.csv', Data, delimiter=", ", fmt='% s')
 
 driver.close()
-
-
