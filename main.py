@@ -76,9 +76,6 @@ def Keywords():
     return keys
 
 
-..send.2.SOL
-
-
 def GoogleSearch(keywords):
     # go to google
     driver.get("https://www.google.com")
